@@ -1,4 +1,4 @@
-package com.example.twinsta;
+package com.example.twinsta.controller;
 
 import com.example.twinsta.domain.Message;
 import com.example.twinsta.repos.MessageRepo;
@@ -14,26 +14,24 @@ import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.BooleanUtils.isFalse;
 
 @Controller
-public class GreetingController {
+public class MainController {
 
 	@Autowired
 	private MessageRepo messageRepo;
 
-	@GetMapping("/greeting")
-	public String greeting(@RequestParam(name = "name", required = false, defaultValue = "World") String name,
-						   Map<String, Object> model) {
-		model.put("name", name);
+	@GetMapping("/")
+	public String greeting(Map<String, Object> model) {
 		return "greeting";
 	}
 
-	@GetMapping
+	@GetMapping("/main")
 	public String main(Map<String, Object> model) {
 		Iterable<Message> messages = messageRepo.findAll();
 		model.put("messages", messages);
 		return "main";
 	}
 
-	@PostMapping
+	@PostMapping("/main")
 	public String add(@RequestParam String text, @RequestParam String tag, Map<String, Object> model) {
 		Message message = Message.builder().text(text).tag(tag).build();
 		messageRepo.save(message);
