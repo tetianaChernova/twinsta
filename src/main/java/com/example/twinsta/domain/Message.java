@@ -29,10 +29,12 @@ public class Message {
 	private String tag;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name="user_id")
+	@JoinColumn(name = "user_id")
 	private User author;
 
-	public String getAuthorName(){
+	private String filename;
+
+	public String getAuthorName() {
 		return nonNull(author) ? author.getUsername() : "<none>";
 	}
 }
