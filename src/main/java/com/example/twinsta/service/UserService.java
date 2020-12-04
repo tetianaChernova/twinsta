@@ -9,8 +9,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -43,24 +48,72 @@ public class UserService implements UserDetailsService {
 
 		if (isFalse(isEmpty(user.getEmail()))) {
 
-			String message = String.format(
-					"Hello %s! \n" + "Welcome to Twinsta! Please visit next link: http:/localhost:8080/activate/%s",
-					user.getUsername(), user.getActivationCode()
-			);
-
-			mailSender.send(user.getEmail(), "Activation code", message);
+			sendMessage(user);
 		}
 		return true;
 	}
 
+	private void sendMessage(User user) {
+		String message = String.format(
+				"Hello %s! \n" + "Welcome to Twinsta! Please visit next link: http:/localhost:8080/activate/%s",
+				user.getUsername(), user.getActivationCode()
+		);
+
+		mailSender.send(user.getEmail(), "Activation code", message);
+	}
+
 	public boolean activateUser(String code) {
 		User user = userRepo.findByActivationCode(code);
-		if (isNull(user)){
+		if (isNull(user)) {
 			return false;
 		}
 		user.setActive(true);
 		user.setActivationCode(null);
 		userRepo.save(user);
 		return true;
+	}
+
+	public List<User> findAll() {
+		return userRepo.findAll();
+	}
+
+	public void saveUser(User user, String username, Map<String, String> form) {
+		user.setUsername(username);
+
+		Set<String> roles = Arrays.stream(Role.values())
+				.map(Role::name)
+				.collect(Collectors.toSet());
+
+		user.getRoles().clear();
+		form.keySet().forEach(key -> {
+			if (roles.contains(key)) {
+				user.getRoles().add(Role.valueOf(key));
+			}
+		});
+		userRepo.save(user);
+	}
+
+	public User updateProfile(User user, String password, String email) {
+		String userEmail = user.getEmail();
+
+		boolean isEmailChanged = (email != null && !email.equals(userEmail)) ||
+				(userEmail != null && !userEmail.equals(email));
+
+		if (isEmailChanged) {
+			user.setEmail(email);
+			if (isFalse(isEmpty(email))) {
+				user.setActivationCode(UUID.randomUUID().toString());
+			}
+		}
+
+		if (isFalse(isEmpty(password))) {
+			user.setPassword(password);
+		}
+
+		userRepo.save(user);
+		if (isEmailChanged) {
+			sendMessage(user);
+		}
+		return user;
 	}
 }
