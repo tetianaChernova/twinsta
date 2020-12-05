@@ -2,8 +2,9 @@ package com.example.twinsta.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Entity;
@@ -17,11 +18,12 @@ import javax.validation.constraints.NotBlank;
 
 import static java.util.Objects.nonNull;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
+@Getter
+@Setter
 public class Message {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
