@@ -35,7 +35,7 @@ public class UserService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		User user = userRepo.findByUsername(username);
-		if(isNull(user)){
+		if (isNull(user)) {
 			throw new UsernameNotFoundException("User not found");
 		}
 		return user;
@@ -122,5 +122,15 @@ public class UserService implements UserDetailsService {
 			sendMessage(user);
 		}
 		return user;
+	}
+
+	public void subscribe(User currentUser, User user) {
+		user.getSubscribers().add(currentUser);
+		userRepo.save(user);
+	}
+
+	public void unsubscribe(User currentUser, User user) {
+		user.getSubscribers().remove(currentUser);
+		userRepo.save(user);
 	}
 }

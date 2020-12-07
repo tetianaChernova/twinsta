@@ -101,6 +101,10 @@ public class MainController {
 		model.addAttribute("messages", messages);
 		model.addAttribute("message", message);
 		model.addAttribute("isCurrentUser", currentUser.equals(user));
+		model.addAttribute("isSubscriber", user.getSubscribers().contains(currentUser));
+		model.addAttribute("userChannel", user);
+		model.addAttribute("subscriptionsCount", user.getSubscriptions().size());
+		model.addAttribute("subscribersCount", user.getSubscribers().size());
 		return "userMessages";
 	}
 
@@ -112,12 +116,12 @@ public class MainController {
 			@RequestParam("text") String text,
 			@RequestParam("tag") String tag,
 			@RequestParam("file") MultipartFile file) throws IOException {
-		if (message.getAuthor().equals(currentUser)){
-			if (isFalse(isEmpty(text))){
+		if (message.getAuthor().equals(currentUser)) {
+			if (isFalse(isEmpty(text))) {
 				message.setText(text);
 			}
 
-			if (isFalse(isEmpty(tag))){
+			if (isFalse(isEmpty(tag))) {
 				message.setTag(tag);
 			}
 			saveFile(message, file);

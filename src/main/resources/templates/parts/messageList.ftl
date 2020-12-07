@@ -1,4 +1,3 @@
-<#--    <div>List of messages</div>-->
 <div class="card-columns">
     <#list messages as message>
         <div class="card my-3">
@@ -17,6 +16,6 @@
             </div>
         </div>
     <#else>
-        No messages available
+        <h6 class="my-3">No messages available</h6>
     </#list>
 </div>
