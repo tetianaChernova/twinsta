@@ -1,10 +1,38 @@
 package com.example.twinsta.repos;
 
 import com.example.twinsta.domain.Message;
+import com.example.twinsta.domain.User;
+import com.example.twinsta.domain.dto.MessageDto;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
 public interface MessageRepo extends CrudRepository<Message, Long> {
-	List<Message> findMessageByTag(String tag);
+	@Query("SELECT new com.example.twinsta.domain.dto.MessageDto(" +
+			"message, " +
+			"COUNT(messagelikes), " +
+			"(SUM(CASE WHEN messagelikes = :user THEN 1 ELSE 0 END) > 0)) " +
+			"FROM Message message LEFT JOIN message.likes messagelikes " +
+			"GROUP BY message")
+	List<MessageDto> findAll(@Param("user") User user);
+
+	@Query("SELECT new com.example.twinsta.domain.dto.MessageDto(" +
+			"message, " +
+			"COUNT(messagelikes), " +
+			"(SUM(CASE WHEN messagelikes = :user THEN 1 ELSE 0 END) > 0)) " +
+			"FROM Message message LEFT JOIN message.likes messagelikes " +
+			"WHERE message.tag =:tag " +
+			"GROUP BY message")
+	List<MessageDto> findMessageByTag(@Param("tag") String tag, @Param("user") User user);
+
+	@Query("SELECT new com.example.twinsta.domain.dto.MessageDto(" +
+			"message, " +
+			"COUNT(messagelikes), " +
+			"(SUM(CASE WHEN messagelikes = :user THEN 1 ELSE 0 END) > 0)) " +
+			"FROM Message message LEFT JOIN message.likes messagelikes " +
+			"where message.author = :author " +
+			"GROUP BY message")
+	List<MessageDto> findByUser(@Param("author") User author, @Param("user") User user);
 }

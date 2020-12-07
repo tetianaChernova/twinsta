@@ -2,7 +2,9 @@ package com.example.twinsta.controller;
 
 import com.example.twinsta.domain.Message;
 import com.example.twinsta.domain.User;
+import com.example.twinsta.domain.dto.MessageDto;
 import com.example.twinsta.repos.MessageRepo;
+import com.example.twinsta.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -12,8 +14,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.io.File;
@@ -35,6 +41,8 @@ public class MainController {
 
 	@Autowired
 	private MessageRepo messageRepo;
+	@Autowired
+	private MessageService messageService;
 
 	@GetMapping("/")
 	public String greeting(Map<String, Object> model) {
@@ -42,15 +50,11 @@ public class MainController {
 	}
 
 	@GetMapping("/main")
-	public String main(@RequestParam(required = false, defaultValue = "") String filter, Model model) {
-		Iterable<Message> messages;
-
-		if (nonNull(filter) && isFalse(filter.isEmpty())) {
-			messages = messageRepo.findMessageByTag(filter);
-		} else {
-			messages = messageRepo.findAll();
-		}
-
+	public String main(
+			@RequestParam(required = false, defaultValue = "") String filter,
+			@AuthenticationPrincipal User user,
+			Model model) {
+		Iterable<MessageDto> messages = messageService.getMessageList(filter, user);
 		model.addAttribute("messages", messages);
 		model.addAttribute("filter", filter);
 		return "main";
@@ -73,7 +77,7 @@ public class MainController {
 			model.addAttribute("message", null);
 			messageRepo.save(message);
 		}
-		Iterable<Message> messages = messageRepo.findAll();
+		Iterable<MessageDto> messages = messageService.getAllMessages(user);
 		model.addAttribute("messages", messages);
 		return "main";
 	}
@@ -91,20 +95,20 @@ public class MainController {
 		}
 	}
 
-	@GetMapping("/user-messages/{user}")
+	@GetMapping("/user-messages/{author}")
 	public String userMessages(
-			@PathVariable User user,
+			@PathVariable User author,
 			@AuthenticationPrincipal User currentUser,
 			Model model,
 			@RequestParam(required = false) Message message) {
-		Set<Message> messages = user.getMessages();
+		Iterable<MessageDto> messages = messageService.getUserMessages(author, currentUser);
 		model.addAttribute("messages", messages);
 		model.addAttribute("message", message);
-		model.addAttribute("isCurrentUser", currentUser.equals(user));
-		model.addAttribute("isSubscriber", user.getSubscribers().contains(currentUser));
-		model.addAttribute("userChannel", user);
-		model.addAttribute("subscriptionsCount", user.getSubscriptions().size());
-		model.addAttribute("subscribersCount", user.getSubscribers().size());
+		model.addAttribute("isCurrentUser", currentUser.equals(author));
+		model.addAttribute("isSubscriber", author.getSubscribers().contains(currentUser));
+		model.addAttribute("userChannel", author);
+		model.addAttribute("subscriptionsCount", author.getSubscriptions().size());
+		model.addAttribute("subscribersCount", author.getSubscribers().size());
 		return "userMessages";
 	}
 
@@ -129,5 +133,26 @@ public class MainController {
 		}
 
 		return "redirect:/user-messages/" + user;
+	}
+
+	@GetMapping("/messages/{message}/like")
+	public String likeMessage(
+			@AuthenticationPrincipal User currentUser,
+			@PathVariable Message message,
+			RedirectAttributes redirectAttributes,
+			@RequestHeader(required = false) String referer){
+		Set<User> likes = message.getLikes();
+		if (likes.contains(currentUser)){
+			likes.remove(currentUser);
+		}
+		else {
+			likes.add(currentUser);
+		}
+		message.setLikes(likes);
+		messageRepo.save(message);
+		UriComponents components = UriComponentsBuilder.fromHttpUrl(referer).build();
+		components.getQueryParams()
+				.forEach(redirectAttributes::addAttribute);
+		return "redirect:" + components.getPath();
 	}
 }

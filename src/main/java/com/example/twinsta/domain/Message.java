@@ -1,5 +1,6 @@
 package com.example.twinsta.domain;
 
+import com.example.twinsta.domain.util.MessageHelper;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,10 +14,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
-
-import static java.util.Objects.nonNull;
+import java.util.HashSet;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -41,7 +44,14 @@ public class Message {
 
 	private String filename;
 
+	@ManyToMany
+	@JoinTable(
+			name = "message_likes",
+			joinColumns = {@JoinColumn(name = "message_id")},
+			inverseJoinColumns = {@JoinColumn(name = "user_id")})
+	public Set<User> likes = new HashSet<>();
+
 	public String getAuthorName() {
-		return nonNull(author) ? author.getUsername() : "<none>";
+		return MessageHelper.getAuthorName(author);
 	}
 }
