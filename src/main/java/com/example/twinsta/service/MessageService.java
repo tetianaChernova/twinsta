@@ -1,6 +1,6 @@
 package com.example.twinsta.service;
 
-import com.example.twinsta.domain.User;
+import com.example.twinsta.domain.psql.User;
 import com.example.twinsta.domain.dto.MessageDto;
 import com.example.twinsta.repos.MessageRepo;
 import org.springframework.beans.factory.annotation.Autowired;

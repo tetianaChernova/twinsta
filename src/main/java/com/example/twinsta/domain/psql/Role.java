@@ -1,4 +1,4 @@
-package com.example.twinsta.domain;
+package com.example.twinsta.domain.psql;
 
 import org.springframework.security.core.GrantedAuthority;
 

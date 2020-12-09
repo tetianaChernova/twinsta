@@ -1,10 +1,13 @@
 package com.example.twinsta.controller;
 
-import com.example.twinsta.domain.Message;
-import com.example.twinsta.domain.User;
+import com.example.twinsta.domain.neo4j.UserNeo;
+import com.example.twinsta.domain.psql.Message;
+import com.example.twinsta.domain.psql.User;
 import com.example.twinsta.domain.dto.MessageDto;
 import com.example.twinsta.repos.MessageRepo;
+import com.example.twinsta.repos.neo4j.UserRepository;
 import com.example.twinsta.service.MessageService;
+import com.example.twinsta.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,6 +27,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -43,6 +47,8 @@ public class MainController {
 	private MessageRepo messageRepo;
 	@Autowired
 	private MessageService messageService;
+	@Autowired
+	private UserService userService;
 
 	@GetMapping("/")
 	public String greeting(Map<String, Object> model) {
@@ -105,10 +111,11 @@ public class MainController {
 		model.addAttribute("messages", messages);
 		model.addAttribute("message", message);
 		model.addAttribute("isCurrentUser", currentUser.equals(author));
-		model.addAttribute("isSubscriber", author.getSubscribers().contains(currentUser));
+		List<UserNeo> subscribers = userService.getUserSubscribers(author);
+		model.addAttribute("isSubscriber", subscribers.contains(currentUser));
 		model.addAttribute("userChannel", author);
-		model.addAttribute("subscriptionsCount", author.getSubscriptions().size());
-		model.addAttribute("subscribersCount", author.getSubscribers().size());
+		model.addAttribute("subscriptionsCount", subscribers.size());
+		model.addAttribute("subscribersCount", subscribers.size());
 		return "userMessages";
 	}
 

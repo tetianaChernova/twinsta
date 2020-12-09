@@ -1,4 +1,4 @@
-package com.example.twinsta.domain;
+package com.example.twinsta.domain.psql;
 
 import com.example.twinsta.domain.util.MessageHelper;
 import lombok.AllArgsConstructor;

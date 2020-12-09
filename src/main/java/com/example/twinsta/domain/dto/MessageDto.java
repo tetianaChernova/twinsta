@@ -1,7 +1,7 @@
 package com.example.twinsta.domain.dto;
 
-import com.example.twinsta.domain.Message;
-import com.example.twinsta.domain.User;
+import com.example.twinsta.domain.psql.Message;
+import com.example.twinsta.domain.psql.User;
 import com.example.twinsta.domain.util.MessageHelper;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

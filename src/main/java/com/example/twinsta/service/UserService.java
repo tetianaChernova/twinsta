@@ -1,8 +1,10 @@
 package com.example.twinsta.service;
 
-import com.example.twinsta.domain.Role;
-import com.example.twinsta.domain.User;
+import com.example.twinsta.domain.neo4j.UserNeo;
+import com.example.twinsta.domain.psql.Role;
+import com.example.twinsta.domain.psql.User;
 import com.example.twinsta.repos.UserRepo;
+import com.example.twinsta.repos.neo4j.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,6 +29,8 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 public class UserService implements UserDetailsService {
 	@Autowired
 	private UserRepo userRepo;
+	@Autowired
+	private UserRepository userNeo4jRepo;
 	@Autowired
 	private MailSender mailSender;
 	@Autowired
@@ -76,7 +80,9 @@ public class UserService implements UserDetailsService {
 		}
 		user.setActive(true);
 		user.setActivationCode(null);
-		userRepo.save(user);
+//		userRepo.save(user);
+		UserNeo userNeo = UserNeo.builder().name(user.getUsername()).email(user.getEmail()).build();
+		userNeo4jRepo.save(userNeo);
 		return true;
 	}
 
@@ -124,13 +130,23 @@ public class UserService implements UserDetailsService {
 		return user;
 	}
 
+
+
 	public void subscribe(User currentUser, User user) {
-		user.getSubscribers().add(currentUser);
+//		user.getSubscribers().add(currentUser);
 		userRepo.save(user);
 	}
 
 	public void unsubscribe(User currentUser, User user) {
-		user.getSubscribers().remove(currentUser);
+//		user.getSubscribers().remove(currentUser);
 		userRepo.save(user);
+	}
+
+	public List<UserNeo> getUserSubscriptions(User user) {
+		return userNeo4jRepo.getUserSubscriptions(user.getUsername());
+	}
+
+	public List<UserNeo> getUserSubscribers(User user) {
+		return userNeo4jRepo.getUserSubscribers(user.getUsername());
 	}
 }

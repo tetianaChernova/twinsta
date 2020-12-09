@@ -1,6 +1,6 @@
 package com.example.twinsta.controller;
 
-import com.example.twinsta.domain.User;
+import com.example.twinsta.domain.psql.User;
 import com.example.twinsta.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

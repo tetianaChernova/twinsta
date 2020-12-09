@@ -1,7 +1,8 @@
 package com.example.twinsta.controller;
 
-import com.example.twinsta.domain.Role;
-import com.example.twinsta.domain.User;
+import com.example.twinsta.domain.psql.Role;
+import com.example.twinsta.domain.psql.User;
+import com.example.twinsta.repos.neo4j.UserRepository;
 import com.example.twinsta.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,6 +22,8 @@ import java.util.Map;
 public class UserController {
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private UserRepository userRepository;
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping
@@ -88,9 +91,9 @@ public class UserController {
 		model.addAttribute("userChannel", user);
 
 		if ("subscriptions".equals(type)) {
-			model.addAttribute("users", user.getSubscriptions());
+			model.addAttribute("users", userService.getUserSubscriptions(user));
 		} else {
-			model.addAttribute("users", user.getSubscribers());
+			model.addAttribute("users", userService.getUserSubscribers(user));
 		}
 		return "subscriptions";
 	}

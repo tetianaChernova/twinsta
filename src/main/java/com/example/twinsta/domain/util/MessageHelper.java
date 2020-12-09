@@ -1,6 +1,6 @@
 package com.example.twinsta.domain.util;
 
-import com.example.twinsta.domain.User;
+import com.example.twinsta.domain.psql.User;
 
 import static java.util.Objects.nonNull;
 
