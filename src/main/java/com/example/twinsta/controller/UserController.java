@@ -66,34 +66,34 @@ public class UserController {
 		return "redirect:/login";
 	}
 
-	@GetMapping("subscribe/{user}")
+	@GetMapping("subscribe/{username}")
 	public String subscribe(
 			@AuthenticationPrincipal User currentUser,
-			@PathVariable User user) {
-		userService.subscribe(currentUser, user);
-		return "redirect:/user-messages/" + user.getId();
+			@PathVariable String username) {
+		userService.subscribe(currentUser, username);
+		return "redirect:/user-messages/" + username;
 	}
 
-	@GetMapping("unsubscribe/{user}")
+	@GetMapping("unsubscribe/{username}")
 	public String unsubscribe(
 			@AuthenticationPrincipal User currentUser,
-			@PathVariable User user) {
-		userService.unsubscribe(currentUser, user);
-		return "redirect:/user-messages/" + user.getId();
+			@PathVariable String username) {
+		userService.unsubscribe(currentUser, username);
+		return "redirect:/user-messages/" + username;
 	}
 
-	@GetMapping("{type}/{user}/list")
+	@GetMapping("{type}/{username}/list")
 	public String userList(
 			Model model,
-			@PathVariable User user,
+			@PathVariable String username,
 			@PathVariable String type) {
 		model.addAttribute("type", type);
-		model.addAttribute("userChannel", user);
+		model.addAttribute("userChannel", username);
 
 		if ("subscriptions".equals(type)) {
-			model.addAttribute("users", userService.getUserSubscriptions(user));
+			model.addAttribute("users", userService.getUserSubscriptions(username));
 		} else {
-			model.addAttribute("users", userService.getUserSubscribers(user));
+			model.addAttribute("users", userService.getUserSubscribers(username));
 		}
 		return "subscriptions";
 	}

@@ -101,28 +101,28 @@ public class MainController {
 		}
 	}
 
-	@GetMapping("/user-messages/{author}")
+	@GetMapping("/user-messages/{username}")
 	public String userMessages(
-			@PathVariable User author,
+			@PathVariable String username,
 			@AuthenticationPrincipal User currentUser,
 			Model model,
 			@RequestParam(required = false) Message message) {
-		Iterable<MessageDto> messages = messageService.getUserMessages(author, currentUser);
+		Iterable<MessageDto> messages = messageService.getUserMessages(username, currentUser);
 		model.addAttribute("messages", messages);
 		model.addAttribute("message", message);
-		model.addAttribute("isCurrentUser", currentUser.equals(author));
-		List<UserNeo> subscribers = userService.getUserSubscribers(author);
+		model.addAttribute("isCurrentUser", currentUser.getUsername().equals(username));
+		List<UserNeo> subscribers = userService.getUserSubscribers(username);
 		model.addAttribute("isSubscriber", subscribers.contains(currentUser));
-		model.addAttribute("userChannel", author);
+		model.addAttribute("userChannel", username);
 		model.addAttribute("subscriptionsCount", subscribers.size());
 		model.addAttribute("subscribersCount", subscribers.size());
 		return "userMessages";
 	}
 
-	@PostMapping("/user-messages/{user}")
+	@PostMapping("/user-messages/{username}")
 	public String updateMessages(
 			@AuthenticationPrincipal User currentUser,
-			@PathVariable Long user,
+			@PathVariable String username,
 			@RequestParam("id") Message message,
 			@RequestParam("text") String text,
 			@RequestParam("tag") String tag,
@@ -139,7 +139,7 @@ public class MainController {
 			messageRepo.save(message);
 		}
 
-		return "redirect:/user-messages/" + user;
+		return "redirect:/user-messages/" + username;
 	}
 
 	@GetMapping("/messages/{message}/like")

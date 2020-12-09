@@ -35,4 +35,13 @@ public interface MessageRepo extends CrudRepository<Message, Long> {
 			"where message.author = :author " +
 			"GROUP BY message")
 	List<MessageDto> findByUser(@Param("author") User author, @Param("user") User user);
+
+	@Query("SELECT new com.example.twinsta.domain.dto.MessageDto(" +
+			"message, " +
+			"COUNT(messagelikes), " +
+			"(SUM(CASE WHEN messagelikes = :user THEN 1 ELSE 0 END) > 0)) " +
+			"FROM Message message LEFT JOIN message.likes messagelikes " +
+			"where message.author.username = :authorName " +
+			"GROUP BY message")
+	Iterable<MessageDto> findByUserName(@Param("authorName") String authorName, User user);
 }

@@ -24,7 +24,7 @@ public class MessageService {
 		return messageRepo.findAll(user);
 	}
 
-	public Iterable<MessageDto> getUserMessages(User author, User user) {
-		return messageRepo.findByUser(author, user);
+	public Iterable<MessageDto> getUserMessages(String authorName, User user) {
+		return messageRepo.findByUserName(authorName, user);
 	}
 }
