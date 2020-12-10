@@ -19,4 +19,12 @@ public interface UserRepository extends Neo4jRepository<UserNeo, Long> {
 
 	UserNeo findByName(String name);
 
+	@Query("MATCH (a:UserNeo),(b:UserNeo) WHERE a.name = $username AND b.name = $userToFollow " +
+			"CREATE (a)-[r:FOLLOWS { name: a.name + '<->' + b.name }]->(b) RETURN type(r), r.name")
+	void subscribe(@Param("username") String username, @Param("userToFollow") String userToFollow);
+
+	@Query("MATCH (:UserNeo {name: $username})-[r:FOLLOWS]-(:UserNeo {name: $userToUnFollow}) DELETE r")
+	void unsubscribe(@Param("username") String username, @Param("userToUnFollow") String userToUnFollow);
+
+	UserNeo getUserNeoByName(String name);
 }

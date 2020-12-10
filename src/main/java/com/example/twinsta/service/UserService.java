@@ -131,15 +131,16 @@ public class UserService implements UserDetailsService {
 	}
 
 
-
-	public void subscribe(User currentUser, String username) {
-//		user.getSubscribers().add(currentUser);
-//		userRepo.save(user);
+	public UserNeo getUserNeoByName(String name) {
+		return userNeo4jRepo.getUserNeoByName(name);
 	}
 
-	public void unsubscribe(User currentUser, String username) {
-//		user.getSubscribers().remove(currentUser);
-//		userRepo.save(user);
+	public void subscribe(User follower, String userToFollow) {
+		userNeo4jRepo.subscribe(follower.getUsername(), userToFollow);
+	}
+
+	public void unsubscribe(User follower, String userToUnFollow) {
+		userNeo4jRepo.unsubscribe(follower.getUsername(), userToUnFollow);
 	}
 
 	public List<UserNeo> getUserSubscriptions(String username) {

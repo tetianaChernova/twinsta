@@ -1,11 +1,10 @@
 package com.example.twinsta.controller;
 
+import com.example.twinsta.domain.dto.MessageDto;
 import com.example.twinsta.domain.neo4j.UserNeo;
 import com.example.twinsta.domain.psql.Message;
 import com.example.twinsta.domain.psql.User;
-import com.example.twinsta.domain.dto.MessageDto;
 import com.example.twinsta.repos.MessageRepo;
-import com.example.twinsta.repos.neo4j.UserRepository;
 import com.example.twinsta.service.MessageService;
 import com.example.twinsta.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.example.twinsta.controller.ControllerUtils.getErrors;
 import static java.util.Objects.nonNull;
@@ -112,9 +112,13 @@ public class MainController {
 		model.addAttribute("message", message);
 		model.addAttribute("isCurrentUser", currentUser.getUsername().equals(username));
 		List<UserNeo> subscribers = userService.getUserSubscribers(username);
-		model.addAttribute("isSubscriber", subscribers.contains(currentUser));
+		List<UserNeo> subscriptions = userService.getUserSubscriptions(username);
+		model.addAttribute("isSubscriber", subscribers.stream()
+				.map(UserNeo::getName)
+				.collect(Collectors.toList())
+				.contains(currentUser.getUsername()));
 		model.addAttribute("userChannel", username);
-		model.addAttribute("subscriptionsCount", subscribers.size());
+		model.addAttribute("subscriptionsCount", subscriptions.size());
 		model.addAttribute("subscribersCount", subscribers.size());
 		return "userMessages";
 	}
@@ -147,12 +151,11 @@ public class MainController {
 			@AuthenticationPrincipal User currentUser,
 			@PathVariable Message message,
 			RedirectAttributes redirectAttributes,
-			@RequestHeader(required = false) String referer){
+			@RequestHeader(required = false) String referer) {
 		Set<User> likes = message.getLikes();
-		if (likes.contains(currentUser)){
+		if (likes.contains(currentUser)) {
 			likes.remove(currentUser);
-		}
-		else {
+		} else {
 			likes.add(currentUser);
 		}
 		message.setLikes(likes);
