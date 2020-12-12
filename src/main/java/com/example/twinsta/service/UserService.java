@@ -150,4 +150,8 @@ public class UserService implements UserDetailsService {
 	public List<UserNeo> getUserSubscribers(String username) {
 		return userNeo4jRepo.getUserSubscribers(username);
 	}
+
+	public Iterable<UserNeo> getUserRecommendations(User user) {
+		return userNeo4jRepo.findRecommendationsForUser(user.getUsername());
+	}
 }

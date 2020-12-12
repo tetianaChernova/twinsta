@@ -27,4 +27,7 @@ public interface UserRepository extends Neo4jRepository<UserNeo, Long> {
 	void unsubscribe(@Param("username") String username, @Param("userToUnFollow") String userToUnFollow);
 
 	UserNeo getUserNeoByName(String name);
+
+	@Query("MATCH (admin:UserNeo {name:$name})-[:FOLLOWS]->(u)-[:FOLLOWS]->(coUsers) where coUsers.name <> $name RETURN coUsers")
+	Iterable<UserNeo> findRecommendationsForUser(@Param("name") String name);
 }

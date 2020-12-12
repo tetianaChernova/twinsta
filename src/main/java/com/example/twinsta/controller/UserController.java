@@ -1,5 +1,6 @@
 package com.example.twinsta.controller;
 
+import com.example.twinsta.domain.neo4j.UserNeo;
 import com.example.twinsta.domain.psql.Role;
 import com.example.twinsta.domain.psql.User;
 import com.example.twinsta.repos.neo4j.UserRepository;
@@ -96,5 +97,12 @@ public class UserController {
 			model.addAttribute("users", userService.getUserSubscribers(username));
 		}
 		return "subscriptions";
+	}
+
+	@GetMapping("/recommendations")
+	public String getUserRecommendations(Model model, @AuthenticationPrincipal User user) {
+		Iterable<UserNeo> recommendations = userService.getUserRecommendations(user);
+		model.addAttribute("recommendations", recommendations);
+		return "recommendations";
 	}
 }
