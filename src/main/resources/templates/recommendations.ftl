@@ -1,32 +1,24 @@
 <#import "parts/common.ftl" as c>
-<@c.page>
-    <h5>Recommendations for you</h5>
+<@c.page "/static/style.css">
+    <#if recommendations?has_content><h5>Recommendations for you</h5></#if>
     <#list recommendations as recommendation>
         <div class="card my-3">
-<#--            <#if message.filename??>-->
-                <img src="https://www.digitals.co.za/wp-content/uploads/2018/05/instagram-followers-1.png" class="card-img-top">
-<#--            </#if>-->
-<#--            <div class="m-2">-->
-<#--                <span>${message.text}</span><br/>-->
-<#--                <i>#${message.tag}</i>-->
-<#--            </div>-->
+            <div class="avatar">
+                <#if recommendation.filename??>
+                    <img src="/img/${recommendation.filename}"
+                         alt="Circle Image" class="card-img-top img-raised rounded-circle img-fluid">
+                <#else>
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRWKbLa_dJgtKiBItyiLId0m6ZKSbRwtCKCgf9dsgGED2uRcZXJ&usqp=CAU"
+                         alt="Circle Image" class="card-img-top img-raised rounded-circle img-fluid">
+                </#if>
+            </div>
             <div class="card-footer text-muted container">
                 <div class="row">
-                    <a class="col align-self-center">
-<#--                       href="/user-messages/${message.author.username}">-->
-                        ${recommendation.name}</a>
-                    <a class="col align-self-center"
-<#--                       href="/messages/${message.id}/like"-->
-                    >
-                    </a>
-<#--                    <#if message.author.id == currentUserId>-->
-<#--                        <a class="col btn btn-primary"-->
-<#--                           href="/user-messages/${message.author.username}?message=${message.id}">Edit</a>-->
-<#--                    </#if>-->
+                    <a class="col align-self-center">${recommendation.name}</a>
                 </div>
             </div>
         </div>
     <#else>
-        <h6 class="my-3">No recommendations are available for you now</h6>
+        <h5 class="my-3">No recommendations are available for you now</h5>
     </#list>
 </@c.page>

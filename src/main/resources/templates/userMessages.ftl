@@ -1,6 +1,6 @@
 <#include "parts/security.ftl">
 <#import "parts/common.ftl" as c>
-<@c.page>
+<@c.page "/static/style.css">
     <h3>${userChannel}</h3>
     <#if !isCurrentUser>
         <#if isSubscriber>

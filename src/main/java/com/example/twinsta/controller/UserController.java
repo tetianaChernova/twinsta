@@ -6,6 +6,7 @@ import com.example.twinsta.domain.psql.User;
 import com.example.twinsta.repos.neo4j.UserRepository;
 import com.example.twinsta.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -15,12 +16,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
 public class UserController {
+	@Value("${upload.path}")
+	private String uploadPath;
+
 	@Autowired
 	private UserService userService;
 	@Autowired
@@ -53,18 +59,20 @@ public class UserController {
 
 	@GetMapping("/profile")
 	public String getUserProfile(Model model, @AuthenticationPrincipal User user) {
-		model.addAttribute("username", user.getUsername());
-		model.addAttribute("email", user.getEmail());
+		model.addAttribute("user", user);
 		return "profile";
 	}
 
 	@PostMapping("/profile")
 	public String editUserProfile(
 			@AuthenticationPrincipal User user,
+			@RequestParam("file") MultipartFile file,
 			@RequestParam String password,
-			@RequestParam String email) {
+			@RequestParam(required = false) String email) throws IOException {
+		String filename = ControllerUtils.setUploadedFile(file, uploadPath);
+		user.setFilename(filename);
 		userService.updateProfile(user, password, email);
-		return "redirect:/login";
+		return "redirect:/logout";
 	}
 
 	@GetMapping("subscribe/{username}")

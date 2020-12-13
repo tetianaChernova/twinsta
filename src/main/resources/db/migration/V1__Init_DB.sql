@@ -24,6 +24,7 @@ CREATE TABLE usr
     email           VARCHAR(255),
     password        VARCHAR(255) NOT NULL,
     username        VARCHAR(255) NOT NULL,
+    filename VARCHAR(255),
     PRIMARY KEY (id)
 );
 

@@ -24,16 +24,13 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.example.twinsta.controller.ControllerUtils.getErrors;
-import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.BooleanUtils.isFalse;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
@@ -51,7 +48,7 @@ public class MainController {
 	private UserService userService;
 
 	@GetMapping("/")
-	public String greeting(Map<String, Object> model) {
+	public String greeting() {
 		return "greeting";
 	}
 
@@ -79,26 +76,14 @@ public class MainController {
 			model.mergeAttributes(errorMap);
 			model.addAttribute("message", message);
 		} else {
-			saveFile(message, file);
+			String filename = ControllerUtils.setUploadedFile(file, uploadPath);
+			message.setFilename(filename);
 			model.addAttribute("message", null);
 			messageRepo.save(message);
 		}
 		Iterable<MessageDto> messages = messageService.getAllMessages(user);
 		model.addAttribute("messages", messages);
 		return "main";
-	}
-
-	private void saveFile(Message message, MultipartFile file) throws IOException {
-		if (nonNull(file) && isFalse(file.getOriginalFilename().isEmpty())) {
-			File uploadDir = new File(uploadPath);
-			if (isFalse(uploadDir.exists())) {
-				uploadDir.mkdir();
-			}
-			String uuidFile = UUID.randomUUID().toString();
-			String resultFilename = uuidFile + "." + file.getOriginalFilename();
-			file.transferTo(new File(uploadPath + "/" + resultFilename));
-			message.setFilename(resultFilename);
-		}
 	}
 
 	@GetMapping("/user-messages/{username}")
@@ -135,14 +120,13 @@ public class MainController {
 			if (isFalse(isEmpty(text))) {
 				message.setText(text);
 			}
-
 			if (isFalse(isEmpty(tag))) {
 				message.setTag(tag);
 			}
-			saveFile(message, file);
+			String filename = ControllerUtils.setUploadedFile(file, uploadPath);
+			message.setFilename(filename);
 			messageRepo.save(message);
 		}
-
 		return "redirect:/user-messages/" + username;
 	}
 

@@ -1,5 +1,5 @@
 <#import "parts/common.ftl" as c>
-<@c.page>
+<@c.page "/static/style.css">
     <h3>${userChannel}</h3>
     <div>${type}</div>
     <ul class="list-group">

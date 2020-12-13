@@ -47,7 +47,6 @@ public class UserService implements UserDetailsService {
 
 	public boolean addUser(User user) {
 		User userFromDb = userRepo.findByUsername(user.getUsername());
-
 		if (nonNull(userFromDb)) {
 			return false;
 		}
@@ -55,10 +54,10 @@ public class UserService implements UserDetailsService {
 		user.setRoles(Collections.singleton(Role.USER));
 		user.setActivationCode(UUID.randomUUID().toString());
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
+
 		userRepo.save(user);
 
 		if (isFalse(isEmpty(user.getEmail()))) {
-
 			sendMessage(user);
 		}
 		return true;
@@ -80,8 +79,12 @@ public class UserService implements UserDetailsService {
 		}
 		user.setActive(true);
 		user.setActivationCode(null);
-//		userRepo.save(user);
-		UserNeo userNeo = UserNeo.builder().name(user.getUsername()).email(user.getEmail()).build();
+		userRepo.save(user);
+		UserNeo userNeo = UserNeo.builder()
+				.name(user.getUsername())
+				.email(user.getEmail())
+				.filename(user.getFilename())
+				.build();
 		userNeo4jRepo.save(userNeo);
 		return true;
 	}
@@ -107,15 +110,18 @@ public class UserService implements UserDetailsService {
 	}
 
 	public User updateProfile(User user, String password, String email) {
+		UserNeo userNeoFromDb = userNeo4jRepo.getUserNeoByName(user.getUsername());
+		userNeoFromDb.setFilename(user.getFilename());
+
 		String userEmail = user.getEmail();
-
-		boolean isEmailChanged = (email != null && !email.equals(userEmail)) ||
-				(userEmail != null && !userEmail.equals(email));
-
+		boolean isEmailChanged = (nonNull(email) && isFalse(email.equals(userEmail))) ||
+				(nonNull(userEmail) && isFalse(userEmail.equals(email)));
 		if (isEmailChanged) {
 			user.setEmail(email);
+			userNeoFromDb.setEmail(email);
 			if (isFalse(isEmpty(email))) {
 				user.setActivationCode(UUID.randomUUID().toString());
+				user.setActive(false);
 			}
 		}
 
@@ -124,12 +130,12 @@ public class UserService implements UserDetailsService {
 		}
 
 		userRepo.save(user);
+		userNeo4jRepo.save(userNeoFromDb);
 		if (isEmailChanged) {
 			sendMessage(user);
 		}
 		return user;
 	}
-
 
 	public UserNeo getUserNeoByName(String name) {
 		return userNeo4jRepo.getUserNeoByName(name);

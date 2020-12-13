@@ -26,6 +26,7 @@ public class UserNeo {
 	@Id
 	private String name;
 	private String email;
+	private String filename;
 
 	@Relationship(type = "FOLLOWS")
 	public Set<UserNeo> subscriptions;

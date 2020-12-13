@@ -1,6 +1,6 @@
 <#import "parts/common.ftl" as c>
 <#include "parts/security.ftl">
-<@c.page>
+<@c.page "/static/style.css">
     <div class="form-row">
         <div class="form-group col-md-6">
             <form method="get" action="main" class="form-inline">
