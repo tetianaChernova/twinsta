@@ -14,10 +14,10 @@
             </li>
             <#if user??>
                 <li class="nav-item active">
-                    <a class="nav-link" href="/main">Messages</a>
+                    <a class="nav-link" href="/main">Posts</a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="/user-messages/${name}">My messages</a>
+                    <a class="nav-link" href="/user-messages/${name}">My posts</a>
                 </li>
             </#if>
             <#if isAdmin>
@@ -27,7 +27,7 @@
             </#if>
             <#if user??>
                 <li class="nav-item active">
-                    <a class="nav-link" href="/user/profile">Profile</a>
+                    <a class="nav-link" href="/user/profile">Edit profile</a>
                 </li>
                 <li class="nav-item active">
                     <a class="nav-link" href="/user/recommendations">Recommendations</a>

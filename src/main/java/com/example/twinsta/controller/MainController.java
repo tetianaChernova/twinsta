@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.example.twinsta.controller.ControllerUtils.getErrors;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.BooleanUtils.isFalse;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
@@ -75,9 +76,13 @@ public class MainController {
 			Map<String, String> errorMap = getErrors(bindingResult);
 			model.mergeAttributes(errorMap);
 			model.addAttribute("message", message);
+			model.addAttribute("messages", messageService.getMessageList("", user));
+			model.addAttribute("filter", "");
 		} else {
 			String filename = ControllerUtils.setUploadedFile(file, uploadPath);
-			message.setFilename(filename);
+			if (nonNull(filename) && isFalse(isEmpty(filename))) {
+				message.setFilename(filename);
+			}
 			model.addAttribute("message", null);
 			messageRepo.save(message);
 		}
@@ -108,26 +113,45 @@ public class MainController {
 		return "userMessages";
 	}
 
-	@PostMapping("/user-messages/{username}")
+	@GetMapping("/user-messages/{username}/{message}/edit")
+	public String messageEditor(
+			@PathVariable Message message,
+			Model model) {
+		model.addAttribute("message", message);
+		return "messageEditor";
+	}
+
+	@PostMapping("/user-messages/{username}/{messageId}/edit")
 	public String updateMessages(
-			@AuthenticationPrincipal User currentUser,
 			@PathVariable String username,
-			@RequestParam("id") Message message,
-			@RequestParam("text") String text,
-			@RequestParam("tag") String tag,
-			@RequestParam("file") MultipartFile file) throws IOException {
-		if (message.getAuthor().equals(currentUser)) {
-			if (isFalse(isEmpty(text))) {
-				message.setText(text);
+			@PathVariable Long messageId,
+			@RequestParam("file") MultipartFile file,
+			@Valid Message message,
+			BindingResult bindingResult,
+			Model model) throws IOException {
+		if (bindingResult.hasErrors()) {
+			Map<String, String> errorMap = getErrors(bindingResult);
+			model.mergeAttributes(errorMap);
+			model.addAttribute("message", message);
+			return "messageEditor";
+		} else {
+			Message messageFromDb = messageService.getMessageById(messageId);
+			if (nonNull(messageFromDb)) {
+				if (isFalse(isEmpty(message.getText()))) {
+					messageFromDb.setText(message.getText());
+				}
+
+				if (isFalse(isEmpty(message.getTag()))) {
+					messageFromDb.setTag(message.getTag());
+				}
+				String filename = ControllerUtils.setUploadedFile(file, uploadPath);
+				if (nonNull(filename) && isFalse(isEmpty(filename))) {
+					messageFromDb.setFilename(filename);
+				}
+				messageRepo.save(messageFromDb);
 			}
-			if (isFalse(isEmpty(tag))) {
-				message.setTag(tag);
-			}
-			String filename = ControllerUtils.setUploadedFile(file, uploadPath);
-			message.setFilename(filename);
-			messageRepo.save(message);
+			return "redirect:/user-messages/" + username;
 		}
-		return "redirect:/user-messages/" + username;
 	}
 
 	@GetMapping("/messages/{message}/like")

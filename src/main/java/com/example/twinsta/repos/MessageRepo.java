@@ -1,8 +1,8 @@
 package com.example.twinsta.repos;
 
+import com.example.twinsta.domain.dto.MessageDto;
 import com.example.twinsta.domain.psql.Message;
 import com.example.twinsta.domain.psql.User;
-import com.example.twinsta.domain.dto.MessageDto;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -44,4 +44,6 @@ public interface MessageRepo extends CrudRepository<Message, Long> {
 			"where message.author.username = :authorName " +
 			"GROUP BY message")
 	Iterable<MessageDto> findByUserName(@Param("authorName") String authorName, User user);
+
+	Message findMessageById(Long messageId);
 }

@@ -60,7 +60,9 @@ public class RegistrationController {
 			return "registration";
 		}
 		String filename = ControllerUtils.setUploadedFile(file, uploadPath);
-		user.setFilename(filename);
+		if (nonNull(filename) && isFalse(isEmpty(filename))) {
+			user.setFilename(filename);
+		}
 		if (isFalse(userService.addUser(user))) {
 			model.addAttribute("usernameError", "User exists!");
 			return "registration";

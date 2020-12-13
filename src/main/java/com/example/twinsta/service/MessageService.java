@@ -1,7 +1,8 @@
 package com.example.twinsta.service;
 
-import com.example.twinsta.domain.psql.User;
 import com.example.twinsta.domain.dto.MessageDto;
+import com.example.twinsta.domain.psql.Message;
+import com.example.twinsta.domain.psql.User;
 import com.example.twinsta.repos.MessageRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,5 +27,9 @@ public class MessageService {
 
 	public Iterable<MessageDto> getUserMessages(String authorName, User user) {
 		return messageRepo.findByUserName(authorName, user);
+	}
+
+	public Message getMessageById(Long messageId) {
+		return messageRepo.findMessageById(messageId);
 	}
 }
