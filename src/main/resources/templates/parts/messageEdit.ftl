@@ -29,7 +29,9 @@
                 </div>
                 <div class="form-group">
                     <div class="custom-file">
-                        <input type="file" name="file" id="customFile">
+                        <input type="file" name="file" id="customFile"
+                               value="<#if message??>${message.filename}</#if>"
+                               style="width: 100%; height: 2.4rem;">
                         <label class="custom-file-label" for="customFile">Choose file</label>
                     </div>
                 </div>

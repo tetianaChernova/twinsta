@@ -28,6 +28,12 @@ public interface UserRepository extends Neo4jRepository<UserNeo, Long> {
 
 	UserNeo getUserNeoByName(String name);
 
-	@Query("MATCH (admin:UserNeo {name:$name})-[:FOLLOWS]->(u)-[:FOLLOWS]->(coUsers) where coUsers.name <> $name RETURN coUsers")
+	@Query("MATCH (user:UserNeo {name: $name})-[:FOLLOWS]->(coUser:UserNeo)-[:FOLLOWS]->(coCoUser:UserNeo)\n" +
+			"WHERE user <> coCoUser\n" +
+			"AND NOT (user)-[:FOLLOWS]->(coCoUser)\n" +
+			"WITH coCoUser AS recommendation, count(coCoUser) as frequency\n" +
+			"RETURN recommendation\n" +
+			"ORDER BY frequency DESC\n" +
+			"LIMIT 5")
 	Iterable<UserNeo> findRecommendationsForUser(@Param("name") String name);
 }

@@ -1,4 +1,4 @@
-<div class="card-columns">
+<div class="card-columns mt-1">
     <#list messages as message>
         <div class="card my-3">
             <#if message.filename??>
@@ -28,6 +28,5 @@
             </div>
         </div>
     <#else>
-        <h6 class="my-3">No messages available</h6>
     </#list>
 </div>
