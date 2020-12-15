@@ -1,5 +1,6 @@
 <#macro editor isEditorForm>
-    <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false"
+    <a class="btn btn-info btn-primary" data-toggle="collapse" href="#collapseExample" role="button"
+       aria-expanded="false"
        aria-controls="collapseExample">
         <#if isEditorForm>Post editor<#else>Post creator</#if>
     </a>
@@ -7,9 +8,9 @@
         <div class="form-group mt-3">
             <form method="post" enctype="multipart/form-data">
                 <div class="form-group">
-                    <input type="text" name="text" class="form-control ${(textError??)?string('is-invalid', '')}"
-                           value="<#if message??>${message.text}</#if>"
-                           placeholder="Enter the message" required/>
+                    <textarea rows="3" name="text"
+                              class="form-control rounded-0 ${(textError??)?string('is-invalid', '')}"
+                              placeholder="Enter the message" required><#if message??>${message.text}</#if></textarea>
                     <#if textError??>
                         <div class="invalid-feedback">
                             ${textError}
@@ -38,7 +39,7 @@
                 </#if>
                 <div class="form-group">
                     <button type="submit"
-                            class="btn btn-primary"><#if isEditorForm>Edit post<#else>Save post</#if></button>
+                            class="btn btn-info btn-primary"><#if isEditorForm>Edit post<#else>Save post</#if></button>
                 </div>
             </form>
         </div>

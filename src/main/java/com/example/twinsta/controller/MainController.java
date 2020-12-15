@@ -97,7 +97,9 @@ public class MainController {
 			@AuthenticationPrincipal User currentUser,
 			Model model,
 			@RequestParam(required = false) Message message) {
+		UserNeo user = userService.getUserNeoByName(username);
 		Iterable<MessageDto> messages = messageService.getUserMessages(username, currentUser);
+		model.addAttribute("usr", user);
 		model.addAttribute("messages", messages);
 		model.addAttribute("message", message);
 		model.addAttribute("isCurrentUser", currentUser.getUsername().equals(username));

@@ -33,10 +33,10 @@ public class Message {
 	private Long id;
 
 	@NotBlank(message = "Please fill the message")
-	@Length(max = 2048, message = "Message is too long (more than 2kB)")
+	@Length(max = 2048, message = "Message is too long (more than 2048 symbols)")
 	private String text;
 	@NotBlank(message = "Please fill the tag")
-	@Length(max = 255, message = "Tag message is too long")
+	@Length(max = 255, message = "Tag message is too long: maximum available symbols = 255")
 	private String tag;
 
 	@ManyToOne(fetch = FetchType.EAGER)

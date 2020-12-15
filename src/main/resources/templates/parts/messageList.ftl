@@ -4,8 +4,8 @@
             <#if message.filename??>
                 <img src="/img/${message.filename}" class="card-img-top">
             </#if>
-            <div class="m-2">
-                <span>${message.text}</span><br/>
+            <div class="m-2 card-text">
+                <p style=" max-height: 130px; overflow-y: scroll; margin-bottom: -1rem">${message.text}</p><br/>
                 <i>#${message.tag}</i>
             </div>
             <div class="card-footer text-muted container">
