@@ -1,0 +1,93 @@
+.bg-image {
+    background-image: url("https://db82kmzzne7f2.cloudfront.net/ghost-blog/2015/08/AdobeStock_76271180.jpg");
+    filter: blur(8px);
+    -webkit-filter: blur(8px);
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.jQKrkx {
+    margin-top: 0;
+    margin-right: auto;
+    text-align: center;
+    color: white;
+    mix-blend-mode: difference;
+    position: absolute;
+    top: calc(45%);
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    width: 80%;
+    min-width: 1300px;
+}
+
+.eNMBox {
+    display: flex;
+    mix-blend-mode: difference;
+    justify-content: right;
+}
+
+.larIlh {
+    font-size: calc(12px + ((4 * (100vw - 320px)) / 1180));
+    color: white;
+    text-decoration-style: initial;
+    text-decoration-color: initial;
+    text-decoration: none;
+    letter-spacing: -0.5px;
+    cursor: pointer;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-family: 'karla', sans-serif;
+    -webkit-text-size-adjust: 100%;
+}
+
+.fwTLVF {
+    font-size: 110px;
+    letter-spacing: -6px;
+    line-height: 110px;
+    pointer-events: none;
+    margin-top: 0px;
+    opacity: 1;
+}
+
+h1 {
+    display: block;
+    font-size: 2em;
+    margin-block-start: 0.67em;
+    margin-block-end: 0.67em;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+    font-weight: bold;
+}
+
+.cGlexN {
+    font-size: 26px;
+    font-weight: normal;
+    letter-spacing: -0.46px;
+    text-decoration-style: initial;
+    text-decoration-color: initial;
+    text-decoration: none;
+    color: black;
+    pointer-events: all;
+    cursor: pointer;
+    mix-blend-mode: difference;
+    text-align: center;
+    position: fixed;
+    z-index: 5;
+    top: calc((50% + 250px) + 36px);
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 1;
+}
+
+a:any-link {
+    color: white;
+    text-decoration: underline;
+    cursor: auto;
+}

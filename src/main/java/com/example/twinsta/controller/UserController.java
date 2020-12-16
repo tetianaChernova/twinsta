@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.BooleanUtils.isFalse;
@@ -99,16 +101,26 @@ public class UserController {
 
 	@GetMapping("{type}/{username}/list")
 	public String userList(
+			@AuthenticationPrincipal User currentUser,
 			Model model,
 			@PathVariable String username,
 			@PathVariable String type) {
+		List<UserNeo> subscribers = userService.getUserSubscribers(username);
+		List<UserNeo> subscriptions = userService.getUserSubscriptions(username);
+
 		model.addAttribute("type", type);
 		model.addAttribute("userChannel", username);
+		model.addAttribute("currentUser", userRepository.getUserNeoByName(currentUser.getUsername()));
+		model.addAttribute("isCurrentUser", currentUser.getUsername().equals(username));
+		model.addAttribute("isSubscriber", subscribers.stream()
+				.map(UserNeo::getName)
+				.collect(Collectors.toList())
+				.contains(currentUser.getUsername()));
 
 		if ("subscriptions".equals(type)) {
-			model.addAttribute("users", userService.getUserSubscriptions(username));
+			model.addAttribute("users", subscriptions);
 		} else {
-			model.addAttribute("users", userService.getUserSubscribers(username));
+			model.addAttribute("users", subscribers);
 		}
 		return "subscriptions";
 	}
@@ -116,7 +128,10 @@ public class UserController {
 	@GetMapping("/recommendations")
 	public String getUserRecommendations(Model model, @AuthenticationPrincipal User user) {
 		Iterable<UserNeo> recommendations = userService.getUserRecommendations(user);
-		model.addAttribute("recommendations", recommendations);
+		model.addAttribute("users", recommendations);
+		model.addAttribute("isSubscriber", false);
+		model.addAttribute("isCurrentUser", true);
+		model.addAttribute("currentUser", userRepository.getUserNeoByName(user.getUsername()));
 		return "recommendations";
 	}
 }

@@ -15,7 +15,8 @@ public interface MessageRepo extends CrudRepository<Message, Long> {
 			"COUNT(messagelikes), " +
 			"(SUM(CASE WHEN messagelikes = :user THEN 1 ELSE 0 END) > 0)) " +
 			"FROM Message message LEFT JOIN message.likes messagelikes " +
-			"GROUP BY message")
+			"GROUP BY message " +
+			"ORDER BY message.id DESC")
 	List<MessageDto> findAll(@Param("user") User user);
 
 	@Query("SELECT new com.example.twinsta.domain.dto.MessageDto(" +
